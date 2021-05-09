@@ -6,7 +6,7 @@ slug: java-optional-get-value
 description: "Best practices for extracting the containing value from a Java Optional."
 ---
 
-Optional is among us since Java 8, and it is extensively used in modern Java. In order to extract the containing value the Optional API provides the self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
+Optional has been with us since Java 8, and it is extensively used in modern Java. In order to extract the containing value the Optional API provides the self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
 
 ## We should not use `get()` unless we prove the containing value is present.
 Sooner than later this code will cause a `NoSuchElementException`.
@@ -77,7 +77,7 @@ String getSalutation() {
 }
 ```
 
-## We should use `orElseGet​(Supplier<? extends T> supplier)` intead of `orElse(T other)` if `other` is generated only for being used in the or else case.
+## Best practice, we should use `orElseGet​(Supplier<? extends T> supplier)` instead of `orElse(T other)` if `other` is generated only for being used in the or else case.
 The parameter of `orElse(T other)` is evaluated even when the optional containing value is present. Instead the supplier parameter of `orElseGet​(Supplier<? extends T> supplier)` is applied **only** when the optional value is absent.
 
 ``` java
@@ -116,14 +116,14 @@ While `orElseThrow()` ends up in a very clean code, the stack trace lacks the mi
 
 ``` java
 User fetchUser(String email) {
-   return user.orElseThrow(() -> new NoSuchElementException("No email: ''" + email + "' present'"));
+   return user.orElseThrow(() -> new NoSuchElementException("No email ''" + email + "' present'"));
 }
 ```    
 
 With the custom message we get a more helpful stack trace with the email that caused the exception.
 
 ``` console
-java.util.NoSuchElementException: No email: 'dude@dude.com' present
+java.util.NoSuchElementException: No email 'dude@dude.com' present
    at Main.lambda$fetchUser$1(Main.java:20)
    at java.base/java.util.Optional.orElseThrow(Optional.java:408)
    at Main.fetchUser(Main.java:20)
@@ -131,7 +131,7 @@ java.util.NoSuchElementException: No email: 'dude@dude.com' present
 ```        
 
 # Conclusion
-We should hardly ever use `get()` beacuse it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our intentions.
+We should hardly ever use `get()` beacuse it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our purposes.
 
 It would not be unreasonable that `get()` would be deprecated in future releases.
 
