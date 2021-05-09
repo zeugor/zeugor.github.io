@@ -19,7 +19,7 @@ String getGreeting(String email) {
 }
 ```
 
-## Neither we should use the `isPresent()` / `get()` block
+## And neither use the `isPresent()` / `get()` block
 We can prove the presence and extract the containing value by `isPresent()` / `get()` block.
 
 ``` java
@@ -44,7 +44,7 @@ String getGreeting(String email) {
 }
 ```
 
-## Best practice, we should use a method of the `orElse(...)` family
+## The best practice is to use a method of the `orElse(...)` family
 The Optional API provides a much less cluttered and defensive methods to get the containing value. In case the containing value is not present they give us different approachs to get over:
 * `public T orElse​(T other)`
 * `public T orElseGet​(Supplier<? extends T> supplier)`
