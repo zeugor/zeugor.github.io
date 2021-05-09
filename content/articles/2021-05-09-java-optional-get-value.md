@@ -19,7 +19,7 @@ String getGreeting(String email) {
 }
 ```
 
-## And neither use a `isPresent()` / `get()` block is a good idea
+## Neither use a `isPresent()` / `get()` block is a good idea
 We can prove the presence and extract the containing value by `isPresent()` / `get()` block.
 
 ``` java
