@@ -32,7 +32,7 @@ String getGreeting(String email) {
 }
 ```    
 
-This is a effective approach, it protects our code from `NoSuchElementException`, but it is a poor solution. It is so cluttered as legacy java code was when we were checking constantly for null references.
+This is an effective approach, it protects our code from `NoSuchElementException`, but it is a poor solution. It is so cluttered as legacy Java code was when we were checking constantly for null references.
 
 ``` java
 String getGreeting(String email) {
@@ -61,7 +61,7 @@ String getGreeting(String email) {
 ```
 
 ## We should not use `orElse(T other)` if `other` is generated only for being used in the or else case.
-If the evaluation of or else case requires any computation work, we should not use `orElse(T other)`. Even we could face a much worse scenario, where the operation is extremly costly, ie. db query. Overuse `orElse(T other)` may result in a performance impact.
+If the evaluation of or else case requires any computation work, we should not use `orElse(T other)`. Even we could face a much worse scenario, where the operation is extremely costly, ie. db query. Overuse `orElse(T other)` may result in a performance impact.
 
 ``` java
 String getGreeting(String email) {
@@ -123,11 +123,11 @@ User fetchUser(String email) {
 With the custom message we get a more helpful stack trace with the email that caused the exception.
 
 ``` console
-    java.util.NoSuchElementException: No email: 'dude@dude.com' present
-        at Main.lambda$fetchUser$1(Main.java:20)
-        at java.base/java.util.Optional.orElseThrow(Optional.java:408)
-        at Main.fetchUser(Main.java:20)
-        at Main.main(Main.java:15)
+java.util.NoSuchElementException: No email: 'dude@dude.com' present
+   at Main.lambda$fetchUser$1(Main.java:20)
+   at java.base/java.util.Optional.orElseThrow(Optional.java:408)
+   at Main.fetchUser(Main.java:20)
+   at Main.main(Main.java:15)
 ```        
 
 # Conclusion
