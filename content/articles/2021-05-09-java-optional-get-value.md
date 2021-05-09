@@ -44,7 +44,7 @@ String getGreeting(String email) {
 }
 ```
 
-## The best practice is to use a method of the `orElse(...)` family
+## The best practice is to use a one of the given `orElse(...)` methods
 The Optional API provides a much less cluttered and defensive methods to get the containing value. In case the containing value is not present they give us different approachs to get over:
 * `public T orElse​(T other)`
 * `public T orElseGet​(Supplier<? extends T> supplier)`
