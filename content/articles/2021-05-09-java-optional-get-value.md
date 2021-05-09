@@ -133,7 +133,7 @@ java.util.NoSuchElementException: No email 'dude@dude.com' present
 # Conclusion
 We should hardly ever use `get()` because it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our purposes.
 
-It would not be unreasonable that `get()` would be deprecated in future releases.
+It is not unreasonable that `get()` would be deprecated in future releases.
 
 We should be aware when `orElse(T other)` could cause unnecessary potential performance impacts, that could be fixed just by replacing it by `orElseGet​(Supplier<? extends T> supplier)`.
 
