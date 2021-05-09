@@ -93,7 +93,7 @@ String getSalutation() {
 
 In our sample the costly operation in `getSalutation()` is evaluated only when it is needed, when the user is absent.
 
-## Consider use `orElseThrow​(Supplier<T>)` over `orElseThrow()`.
+## Lastly, consider use `orElseThrow​(Supplier<T>)` over `orElseThrow()`
 While `orElseThrow​(Supplier<>)` is in Optional API since the beginning, `orElseThrow()` was introduced in Java 10 (non-LTS). `orElseThrow()` throws a `NoSuchElementException` if the value is not present.
 
 ``` java
