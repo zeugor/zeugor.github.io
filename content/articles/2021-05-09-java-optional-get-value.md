@@ -65,7 +65,9 @@ If the evaluation of or else case requires any computation work, we should not u
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder.findByEmail(email).map(User::getSalutation);
+   Optional<String> salutation = userFinder 
+         .findByEmail(email)
+         .map(User::getSalutation);
    // getSalutation() is evaluated even when the user is present!!!
    return salutation.orElse(getSalutation());
 }
@@ -82,7 +84,7 @@ The parameter of `orElse(T other)` is evaluated even when the optional containin
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder //
+   Optional<String> salutation = userFinder 
          .findByEmail(email)
          .map(User::getSalutation);
    return salutation.orElseGet(() -> getSalutation());
