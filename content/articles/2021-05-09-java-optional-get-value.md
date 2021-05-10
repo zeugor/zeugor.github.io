@@ -82,7 +82,9 @@ The parameter of `orElse(T other)` is evaluated even when the optional containin
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder.findByEmail(email).map(User::getSalutation);
+   Optional<String> salutation = userFinder //
+         .findByEmail(email)
+         .map(User::getSalutation);
    return salutation.orElseGet(() -> getSalutation());
 }
 
