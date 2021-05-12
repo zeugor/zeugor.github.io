@@ -8,7 +8,7 @@ description: "Best practices for extracting the containing value from a Java Opt
 
 Optional has been with us since Java 8, and it is extensively used in modern Java. In order to extract the containing value the Optional API provides the self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
 
-## We should not use `get()` unless we prove the containing value is present
+## We should never use `get()` unless we prove the containing value is present
 Sooner than later this code will cause a `NoSuchElementException`.
 
 ``` java
