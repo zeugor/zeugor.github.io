@@ -143,7 +143,7 @@ User fetchUser(String email) {
 }
 ```  
 
-As we are creating a new msg object every time fetchUser(String) is called, not just when the user optional is empty.
+As we are creating a new `msg` object every time `fetchUser(String)` is called, not just when the user optional is empty.
 
 ## In a nutshell
 We should hardly ever use `get()` because it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our purposes.
