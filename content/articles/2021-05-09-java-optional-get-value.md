@@ -3,10 +3,10 @@ title: "How to get value from Optional in Java"
 tags: [java-8, java-10, optional, clean-code]
 date: 2021-05-09
 slug: java-optional-get-value
-description: "Best practices for extracting the containing value from a Java Optional."
+description: "Best practices for extracting the contained value from a Java Optional."
 ---
 
-Optional has been with us since Java 8, and it is extensively used in modern Java. In order to extract the containing value the Optional API provides the self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
+Optional is with us since Java 8, and it is extensively used in modern Java. Optional API provides in order to extract the contained value a self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
 
 ## We should never use `get()` unless we prove the contained value is present
 Sooner than later this code will cause a `NoSuchElementException`.
@@ -20,7 +20,7 @@ String getGreeting(String email) {
 ```
 
 ## Neither use `isPresent()` / `get()` block is a good idea
-We can prove the presence and extract the containing value by `isPresent()` / `get()` block.
+We can prove the presence and extract the contained value by `isPresent()` / `get()` block.
 
 ``` java
 String getGreeting(String email) {
@@ -32,7 +32,7 @@ String getGreeting(String email) {
 }
 ```    
 
-This is an effective approach, it protects our code from `NoSuchElementException`, but it is a poor solution. It is so cluttered as legacy Java code was when we were checking constantly for null references.
+This is certainly an effective approach. Our piece of code is protected against `NoSuchElementException`, but this is still a poor solution. It is so cluttered as legacy Java code was when we were checking constantly for null references.
 
 ``` java
 String getGreeting(String email) {
@@ -44,14 +44,14 @@ String getGreeting(String email) {
 }
 ```
 
-## Generally a better practice is to use one of the given `orElse(...)`
-The Optional API provides a much less cluttered and defensive methods to get the containing value. In case the containing value is not present they give us different approaches to get over:
+## Generally a better practice is to use one of the given `orElse...`
+The Optional API provides a much less cluttered and defensive methods to get the contained value. In case the contained value is not present they give us different approaches to get over:
 * `public T orElse(T other)`
 * `public T orElseGet(Supplier<? extends T> supplier)`
 * `public T orElseThrow()`
 * `public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X`
 
-In our sample if there is no user with the given email, the default salutation is a compile constant. The way to go seems to be `orElse(T other)`.
+Our previous sample could be refactored succinctly using the overloaded method `public T orElse(T other)`. We choose this because the fallback variable `"Hello"` does not require any computational work for being generated.
 
 ``` java
 String getGreeting(String email) {
@@ -60,31 +60,31 @@ String getGreeting(String email) {
 }
 ```
 
-## We should not use `orElse(T other)` if `other` is generated only for being used in the or else case.
-If the evaluation of or else case requires any computation work, we should not use `orElse(T other)`. Even we could face a much worse scenario, where the operation is extremely costly, ie. db query. Overuse `orElse(T other)` may result in a performance impact.
+## `orElse()` vs `orElseGet()`
+We should be carefully when the fallback value is not already known and has to be generated. Always in this case we should select `T orElseGet(Supplier<? extends T> supplier)`, doing so we are saving the computation work needed to generate it when it is not going to be used.
+
+Otherwise, if the fallback operation is extremely costly, i.e. db query, we could face a high performance impact.
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder 
-         .findByEmail(email)
-         .map(User::getSalutation);
-   // getSalutation() is evaluated even when the user is present!!!
+   Optional<String> salutation = userFinder.findByEmail(email).map(User::getSalutation);
+   // getSalutation() is computed even when the user is present!!!
    return salutation.orElse(getSalutation());
 }
 
 String getSalutation() {
    // computation work!!!
-   // or even worse very costly operation, ie. db query !!!
+   // be very careful with very costly operations, i.e. db query !!!
    return ...;
 }
 ```
 
 ## Best practice, we should use `orElseGet(Supplier<? extends T> supplier)` instead of `orElse(T other)` if `other` is generated only for being used in the or else case.
-The parameter of `orElse(T other)` is evaluated even when the optional containing value is present. Instead the supplier parameter of `orElseGet(Supplier<? extends T> supplier)` is applied **only** when the optional value is absent.
+The parameter of `orElse(T other)` is evaluated even when the optional contained value is present. Instead the supplier parameter of `orElseGet(Supplier<? extends T> supplier)` is applied **only** when the optional value is absent.
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder 
+   Optional<String> salutation = userFinder
          .findByEmail(email)
          .map(User::getSalutation);
    return salutation.orElseGet(() -> getSalutation());
