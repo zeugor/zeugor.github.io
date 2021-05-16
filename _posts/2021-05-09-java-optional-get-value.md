@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "How we should extract the value from a Java Optional"
+title: "How to get the value from a Java Optional"
 tags: [java-8, java-10, optional, clean-code]
 date: 2021-05-09
 slug: java-optional-get-value
-description: "Best practices for extracting the containing value from a Java Optional."
+description: "Best practices for extracting the contained value from a Java Optional."
 ---
 
-Optional has been with us since Java 8, and it is extensively used in modern Java. In order to extract the containing value the Optional API provides the self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
+Optional is with us since Java 8, and it is extensively used in modern Java. Optional API provides in order to extract the contained value a self-explanatory method `get()`. This is a tricky method that uses to cause cluttered and buggy code. In this post we are going show why we should avoid it, while spotlighting their downsides and showing better alternatives.
 
-## We should not use `get()` unless we prove the containing value is present.
+## We should never use `get()` unless we prove the contained value is present
 Sooner than later this code will cause a `NoSuchElementException`.
 
 ``` java
@@ -20,8 +20,8 @@ String getGreeting(String email) {
 }
 ```
 
-## We should not use the `isPresent()` / `get()` block
-We can prove the presence and extract the containing value by `isPresent()` / `get()` block.
+## Neither use `isPresent()` / `get()` block is a good idea
+We can prove the presence and extract the contained value by `isPresent()` / `get()` block.
 
 ``` java
 String getGreeting(String email) {
@@ -33,7 +33,7 @@ String getGreeting(String email) {
 }
 ```    
 
-This is an effective approach, it protects our code from `NoSuchElementException`, but it is a poor solution. It is so cluttered as legacy Java code was when we were checking constantly for null references.
+This is certainly an effective approach. Our piece of code is protected against `NoSuchElementException`, but this is still a poor solution. It is so cluttered as legacy Java code was when we were checking constantly for null references.
 
 ``` java
 String getGreeting(String email) {
@@ -45,14 +45,14 @@ String getGreeting(String email) {
 }
 ```
 
-## Best practice, we should use a method of the `orElse(...)` family
-The Optional API provides a much less cluttered and defensive methods to get the containing value. In case the containing value is not present they give us different approachs to get over:
-* `public T orElse​(T other)`
-* `public T orElseGet​(Supplier<? extends T> supplier)`
+## Generally a better practice is to use one of the given `orElse...`
+The Optional API provides a much less cluttered and defensive methods to get the contained value. In case the contained value is not present they give us different approaches to get over:
+* `public T orElse(T other)`
+* `public T orElseGet(Supplier<? extends T> supplier)`
 * `public T orElseThrow()`
-* `public <X extends Throwable> T orElseThrow​(Supplier<? extends X> exceptionSupplier) throws X`
+* `public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X`
 
-In our sample if there is no user with the given email, the default salutation is a compile constant. The way to go seems to be `orElse(T other)`.
+Our previous sample could be refactored succinctly using the overloaded method `public T orElse(T other)`. We choose this because the fallback variable `"Hello"` does not require any computational work for being generated.
 
 ``` java
 String getGreeting(String email) {
@@ -61,29 +61,33 @@ String getGreeting(String email) {
 }
 ```
 
-## We should not use `orElse(T other)` if `other` is generated only for being used in the or else case.
-If the evaluation of or else case requires any computation work, we should not use `orElse(T other)`. Even we could face a much worse scenario, where the operation is extremely costly, ie. db query. Overuse `orElse(T other)` may result in a performance impact.
+## `orElse()` vs `orElseGet()`
+We should be carefully when the fallback value is not already known and has to be generated. Always in this case we should select `T orElseGet(Supplier<? extends T> supplier)`, doing so we are saving the computation work needed to generate it when it is not going to be used.
+
+Otherwise, if the fallback operation is extremely costly, i.e. db query, we could face a high performance impact.
 
 ``` java
 String getGreeting(String email) {
    Optional<String> salutation = userFinder.findByEmail(email).map(User::getSalutation);
-   // getSalutation() is evaluated even when the user is present!!!
+   // getSalutation() is computed even when the user is present!!!
    return salutation.orElse(getSalutation());
 }
 
 String getSalutation() {
    // computation work!!!
-   // or even worse very costly operation, ie. db query !!!
+   // be very careful with very costly operations, i.e. db query !!!
    return ...;
 }
 ```
 
-## Best practice, we should use `orElseGet​(Supplier<? extends T> supplier)` instead of `orElse(T other)` if `other` is generated only for being used in the or else case.
-The parameter of `orElse(T other)` is evaluated even when the optional containing value is present. Instead the supplier parameter of `orElseGet​(Supplier<? extends T> supplier)` is applied **only** when the optional value is absent.
+## Best practice, we should use `orElseGet(Supplier<? extends T> supplier)` instead of `orElse(T other)` if `other` is generated only for being used in the or else case.
+The parameter of `orElse(T other)` is evaluated even when the optional contained value is present. Instead the supplier parameter of `orElseGet(Supplier<? extends T> supplier)` is applied **only** when the optional value is absent.
 
 ``` java
 String getGreeting(String email) {
-   Optional<String> salutation = userFinder.findByEmail(email).map(User::getSalutation);
+   Optional<String> salutation = userFinder
+         .findByEmail(email)
+         .map(User::getSalutation);
    return salutation.orElseGet(() -> getSalutation());
 }
 
@@ -94,8 +98,8 @@ String getSalutation() {
 
 In our sample the costly operation in `getSalutation()` is evaluated only when it is needed, when the user is absent.
 
-## Consider use `orElseThrow​(Supplier<T>)` over `orElseThrow()`.
-While `orElseThrow​(Supplier<>)` is in Optional API since the beginning, `orElseThrow()` was introduced in Java 10 (non-LTS). `orElseThrow()` throws a `NoSuchElementException` if the value is not present.
+## Lastly, consider use `orElseThrow(Supplier<T>)` over `orElseThrow()`
+While `orElseThrow(Supplier<>)` is in Optional API since the beginning, `orElseThrow()` was introduced in Java 10 (non-LTS). Both throw a `NoSuchElementException` if the value is not present.
 
 ``` java
 User fetchUser(String email) {
@@ -113,7 +117,7 @@ java.util.NoSuchElementException: No value present
    at Main.main(Main.java:15)
 ```
 
-While `orElseThrow()` ends up in a very clean code, the stack trace lacks the missed email that cause this exception. Unless the given parameter is sensitive data that we should not be logged, it is preferible used `orElseThrow​(Supplier<>)`, because we can provide a richer message to the exception that we will help us in future analysis of buggy issues.
+While `orElseThrow()` ends up in a very clean code, the stack trace lacks the missed email that cause this exception. Unless the given parameter is sensitive data that we should not be logged, it is preferable used `orElseThrow(Supplier<>)`, because we can provide a richer message to the exception that we will help us in future analysis of buggy issues.
 
 ``` java
 User fetchUser(String email) {
@@ -131,11 +135,22 @@ java.util.NoSuchElementException: No email 'dude@dude.com' present
    at Main.main(Main.java:15)
 ```        
 
-# Conclusion
-We should hardly ever use `get()` beacuse it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our purposes.
+If the exception message ends up very long, don't fall into this.
 
-It would not be unreasonable that `get()` would be deprecated in future releases.
+``` java
+User fetchUser(String email) {
+   var msg = "No email ''" + email + "' present'";
+   return user.orElseThrow(() -> new NoSuchElementException(msg));
+}
+```  
 
-We should be aware when `orElse(T other)` could cause unnecessary potential performance impacts, that could be fixed just by replacing it by `orElseGet​(Supplier<? extends T> supplier)`.
+As we are creating a new `msg` object every time `fetchUser(String)` is called, not just when the user optional is empty.
+
+## In a nutshell
+We should hardly ever use `get()` because it results in cluttered code with high chances of throwing a `NoSuchElementException`. Alternatively we should choose the `orElse(...)` alternative method that best suits our purposes.
+
+It is not unreasonable that `get()` would be deprecated in future releases.
+
+We should be aware when `orElse(T other)` could cause unnecessary potential performance impacts, that could be fixed just by replacing it by `orElseGet(Supplier<? extends T> supplier)`.
 
 We should provide messages to our thrown exception with enough information to clear up the reason of our buggy scenarios.
