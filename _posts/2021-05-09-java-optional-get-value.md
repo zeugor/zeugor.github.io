@@ -1,5 +1,6 @@
 ---
-title: "How to get value from Optional in Java"
+layout: post
+title: "How to get the value from a Java Optional"
 tags: [java-8, java-10, optional, clean-code]
 date: 2021-05-09
 slug: java-optional-get-value
