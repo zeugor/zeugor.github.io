@@ -1,21 +1,18 @@
 ---
-layout: about
-title: About Me
-description: A simple and elegant jekyll blog theme.
-image: assets/images/about.jpg
-show: true
+layout: page
+title: About
+permalink: /about/
 ---
-![test image]({{ site.baseurl }}/assets/images/project.jpg)
 
-### Summary
+This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
 
-Enthusiastic software engineer with 4+ years experience participating in the complete product development lifecycle of successfully launched applications.
-Eager to join XYZ Inc. to deliver mission-critical technology and business solutions to Fortune 500 companies and some of the most recognized brands on the planet.
-In previous roles, reduced downtime by 15% and warranty costs by 25%; identified and resolved a process bottleneck that reduced coding efficiency by up to 30%.
+You can find the source code for Minima at GitHub:
+[jekyll][jekyll-organization] /
+[minima](https://github.com/jekyll/minima)
 
-### Skills
+You can find the source code for Jekyll at GitHub:
+[jekyll][jekyll-organization] /
+[jekyll](https://github.com/jekyll/jekyll)
 
-- Java (Spring, Hibernate, GWT, JSF)
-- Python (Django, Flask, Keras, Tensorflow, Pytorch)
-- Git, Github, Bitbucket
-- Docker, Jenkins, Kubernetes, CircleCIs
+
+[jekyll-organization]: https://github.com/jekyll
