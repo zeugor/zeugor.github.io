@@ -1,4 +1,5 @@
 ---
+layout: post
 title: "How we should extract the value from a Java Optional"
 tags: [java-8, java-10, optional, clean-code]
 date: 2021-05-09
