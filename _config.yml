@@ -24,6 +24,7 @@ url: "https://craftsmanjourney.com" # the base hostname & protocol for your site
 #twitter_username: jekyllrb
 #github_username:  jekyll
 google_analytics: G-45M4WBPPNM
+google_trackingID: UA-197055402-1
 
 # Build settings
 markdown: kramdown
